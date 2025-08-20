@@ -1,24 +1,3 @@
 {
-    "java.project.sourcePaths": [
-        "Tries",
-        "Stacks",
-        "Recursion",
-        "Queue",
-        "Practice",
-        "OOPS",
-        "Linked Lists",
-        "Heaps",
-        "Hashing",
-        "Greedy Algorithms",
-        "Graphs",
-        "Binary Trees",
-        "Basic Java",
-        "Backtracking",
-        "BST",
-        "Arrays",
-        "ArrayList",
-        "Strings"
-    ],
-    "java.debug.settings.onBuildFailureProceed": true,
     "editor.fontFamily": "'JetBrains Mono', Consolas, 'Courier New', monospace",
 }
