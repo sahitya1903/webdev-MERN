@@ -1,0 +1,47 @@
+<h2>Registration Form</h2>
+<form action="/server">
+    <label for="name">Name: </label>
+    <input type="text" placeholder="Enter name" id="name" name="name">
+    <br><br>
+    <label for="username">Username:</label>
+    <input type="text" placeholder="Enter username:" id="username" name="username" required>
+    <br><br>
+    
+    <label for="password">Password</label> 
+    <input type="password" placeholder="Enter password:" id="password" name="password" required>
+    <br><br>
+
+    <div>Gender:
+    <input type="radio" name="gender" id="male" value="male">
+    <label for="male">Male</label>
+    <input type="radio" name="gender" id="female" value="female">
+    <label for="female">Female</label>
+    </div>
+    <br>
+
+    <div>Profession
+        <select name="profession" id="profession">
+            <option disabled selected>Choose your profession</option>
+            <option value="student">Student</option>
+            <option value="dev">Developer</option>
+        </select>
+    </div>
+
+    <br>
+
+    <label for="vol">Select volume:</label>
+    <input type="range" id="vol" name="vol" min="0" max="100" step="10" value="70">
+    <br>
+
+    <input type="checkbox" name="terms" id="terms">
+    <label for="terms">I agree to terms and conditions.</label>
+    <br>
+
+    <label for="feedback">Please give your valuable feedback:</label>
+    <textarea id="feedback" name="feedback" placeholder="Write your feedback here"></textarea>
+    <br>
+
+    <button type="submit">Submit</button>
+    <button type="reset">Reset</button>
+
+</form>

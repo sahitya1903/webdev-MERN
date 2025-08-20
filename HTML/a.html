@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligent Document Query System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .suggestion-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .suggestion-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Intelligent Document Query System</h1>
+            <p class="text-md text-gray-600 mt-2">Process natural language queries against unstructured documents.</p>
+        </header>
+
+        <main class="bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-gray-200">
+            <!-- Step 1: Document Input -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <label for="documentText" class="block text-lg font-semibold text-gray-700">1. Paste Your Document</label>
+                    <button id="summarizeButton" class="text-sm bg-indigo-100 text-indigo-700 font-semibold py-1 px-3 rounded-full hover:bg-indigo-200 transition">✨ Summarize Document</button>
+                </div>
+                <textarea id="documentText" rows="10" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" placeholder="Paste your policy document, contract, or any other text here..."></textarea>
+            </div>
+            
+            <!-- Summary Display -->
+            <div id="summaryContainer" class="mb-6 bg-indigo-50 p-4 rounded-lg" style="display: none;">
+                <h4 class="font-semibold text-indigo-800 mb-2">Document Summary:</h4>
+                <p id="summaryText" class="text-indigo-700 text-sm"></p>
+            </div>
+
+            <!-- Step 2: Query Input -->
+            <div class="mb-6">
+                 <div class="flex justify-between items-center mb-2">
+                    <label for="queryText" class="block text-lg font-semibold text-gray-700">2. Enter Your Query</label>
+                    <button id="suggestQueriesButton" class="text-sm bg-teal-100 text-teal-700 font-semibold py-1 px-3 rounded-full hover:bg-teal-200 transition">✨ Suggest Queries</button>
+                </div>
+                <input type="text" id="queryText" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" placeholder="e.g., '46-year-old male, knee surgery in Pune, 3-month-old insurance policy'">
+            </div>
+            
+            <!-- Query Suggestions Display -->
+            <div id="suggestionsContainer" class="mb-6" style="display: none;">
+                <h4 class="font-semibold text-teal-800 mb-2">Query Suggestions:</h4>
+                <div id="suggestionsList" class="flex flex-wrap gap-2">
+                    <!-- Suggestions will be injected here -->
+                </div>
+            </div>
+
+            <!-- Step 3: Action Button -->
+            <div class="text-center">
+                <button id="processButton" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 transform hover:scale-105">
+                    Analyze Query
+                </button>
+            </div>
+        </main>
+
+        <!-- Results Section -->
+        <div id="resultsContainer" class="mt-8" style="display: none;">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4 text-center">Analysis Result</h2>
+            
+            <!-- Loader -->
+            <div id="loader" class="flex justify-center items-center h-32" style="display: none;">
+                <div class="loader"></div>
+                <p class="ml-4 text-gray-600">Analyzing document and query...</p>
+            </div>
+
+            <!-- Generic Loader for Gemini Features -->
+             <div id="geminiLoader" class="flex justify-center items-center h-20" style="display: none;">
+                <div class="loader"></div>
+                <p id="geminiLoaderText" class="ml-4 text-gray-600"></p>
+            </div>
+
+            <!-- Error Message -->
+            <div id="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative" style="display: none;" role="alert">
+                <strong class="font-bold">Error!</strong>
+                <span class="block sm:inline" id="errorText"></span>
+            </div>
+
+            <!-- Formatted Results -->
+            <div id="formattedResults" class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 fade-in" style="display: none;">
+                <!-- Decision -->
+                <div class="flex items-center mb-4">
+                    <span id="decisionIcon" class="text-3xl mr-4"></span>
+                    <h3 class="text-2xl font-bold" id="decisionText"></h3>
+                </div>
+                
+                <!-- Justification -->
+                <div class="mb-4">
+                    <h4 class="font-semibold text-lg text-gray-800">Justification:</h4>
+                    <p id="justificationText" class="text-gray-700 ml-1"></p>
+                </div>
+
+                <!-- Amount -->
+                <div id="amountContainer" class="mb-4" style="display: none;">
+                    <h4 class="font-semibold text-lg text-gray-800">Payout Amount:</h4>
+                    <p id="amountText" class="text-gray-700 ml-1"></p>
+                </div>
+
+                <!-- Relevant Clauses -->
+                <div>
+                    <h4 class="font-semibold text-lg text-gray-800">Based on Relevant Clauses:</h4>
+                    <ul id="clausesList" class="list-disc list-inside mt-2 space-y-2 text-gray-600 bg-gray-50 p-4 rounded-lg">
+                        <!-- Clauses will be injected here -->
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Raw JSON Output -->
+            <div id="jsonOutputContainer" class="mt-6 fade-in" style="display: none;">
+                 <h3 class="text-lg font-semibold text-gray-700 mb-2">Raw JSON Response</h3>
+                 <pre class="bg-gray-800 text-white p-4 rounded-lg overflow-x-auto"><code id="jsonOutput"></code></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Main elements
+        const processButton = document.getElementById('processButton');
+        const summarizeButton = document.getElementById('summarizeButton');
+        const suggestQueriesButton = document.getElementById('suggestQueriesButton');
+        
+        // Containers and displays
+        const resultsContainer = document.getElementById('resultsContainer');
+        const summaryContainer = document.getElementById('summaryContainer');
+        const suggestionsContainer = document.getElementById('suggestionsContainer');
+        const formattedResults = document.getElementById('formattedResults');
+        const jsonOutputContainer = document.getElementById('jsonOutputContainer');
+
+        // Loaders and messages
+        const loader = document.getElementById('loader');
+        const geminiLoader = document.getElementById('geminiLoader');
+        const geminiLoaderText = document.getElementById('geminiLoaderText');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+
+        // Sample policy for easy testing
+        document.getElementById('documentText').value = `
+Bajaj Allianz General Insurance Co. Ltd.
+GLOBAL HEALTH CARE Policy Wordings UIN-BAJHLIP23020V012223
+
+SECTION A) PREAMBLE
+Whereas the Insured described in the Policy Schedule hereto (hereinafter called the 'Insured or "Policyholder" or "Insured Person") has made to Bajaj Allianz General Insurance Company Limited (hereinafter called the "Company" or "Insurer" or "Insurance Company") a proposal, which shall be the basis of this Contract and is deemed to be incorporated herein, containing certain undertakings, declarations, information/particulars and statements, which is hereby agreed to be the basis of this Contract and be considered as incorporated herein, for the insurance Contract hereinafter contained and has paid the premium specified in the Policy Schedule hereto as consideration for such insurance Contract, now the Company agrees, subject always to the Policy Schedule and the following terms, conditions, exclusions, and limitations of the Policy, and in excess of the amount of the Deductible/Co-Payment, to indemnify the Insured in respect of an admissible claim in the manner and to the extent hereinafter stated.
+
+SECTION B) DEFINITIONS - STANDARD DEFINITIONS
+1. Accident: An Accident means sudden, unforeseen and involuntary event caused by external, visible and violent means.
+2. Any one Illness: Any one Illness means continuous Period of Illness and it includes relapse within 45 days from the date of last consultation with the Hospital/Nursing Home where treatment was taken.
+3. Pre-Existing Disease: Pre-Existing Disease means any condition, ailment or Injury or disease:
+a. That is/are diagnosed by a physician within 48 months prior to the effective date of the Policy issued by the insurer or
+b. For which medical advice or treatment was recommended by, or received from, a physician within 48 months prior to the effective date of the Policy or its reinstatement.
+... and so on for all clauses from the provided document ...
+SECTION D) EXCLUSIONS- STANDARD EXCLUSIONS APPLICABLE TO PART A- DOMESTIC COVER
+1) Pre-Existing Diseases (Code -Exc101)
+a. Expenses related to the treatment of a Pre-Existing Disease (PED) and its direct complications shall be excluded until the expiry of 36 months of continuous coverage after the date of inception of the first Global Health Care Policy with Us.
+b. In case of enhancement of Sum Insured the exclusion shall apply afresh to the extent of Sum Insured increase.
+c. If the Insured is continuously covered without any break as defined under the Portability norms of the extant IRDAI (Health Insurance) Regulations then waiting period for the same would be reduced to the extent of prior coverage.
+d. Coverage under the Policy after the expiry of 36 months for any Pre-Existing Disease is subject to the same being declared at the time of application and accepted by Insurer.
+
+2) Specified disease/procedure waiting period (Code - Exc102)
+a. Expenses related to the treatment of the listed Conditions, surgeries/treatments shall be excluded until the expiry of 24 months of continuous coverage after the date of inception of the first Global Health Care Policy with Us. This exclusion shall not be applicable for claims arising due to an Accident.
+... list of specified diseases ...
+27. Joint replacement surgery
+
+3) 30-day waiting period (Code - Excl03)
+a. Expenses related to the treatment of any Illness within 30 days from the first Policy commencement date shall be excluded except claims arising due to an Accident, provided the same are covered.
+`;
+
+        // --- Core API Call Function ---
+        async function callGeminiAPI(payload) {
+            const apiKey = ""; // Leave empty, handled by environment
+            const apiUrl = https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey};
+            
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.text();
+                throw new Error(API Error: ${response.status} ${response.statusText}. Details: ${errorBody});
+            }
+
+            const result = await response.json();
+
+            if (result.candidates && result.candidates.length > 0 &&
+                result.candidates[0].content && result.candidates[0].content.parts &&
+                result.candidates[0].content.parts.length > 0) {
+                return result.candidates[0].content.parts[0].text;
+            } else {
+                console.error("Unexpected API response structure:", result);
+                throw new Error('The API returned an unexpected response structure. Check console for details.');
+            }
+        }
+
+        // --- Event Listeners ---
+        summarizeButton.addEventListener('click', handleSummarize);
+        suggestQueriesButton.addEventListener('click', handleSuggestQueries);
+        processButton.addEventListener('click', handleProcessQuery);
+
+        // --- Handlers for Gemini Features ---
+        async function handleSummarize() {
+            const documentText = document.getElementById('documentText').value.trim();
+            if (!documentText) {
+                showError('Please paste a document to summarize.');
+                return;
+            }
+            
+            hideAllResults();
+            showGeminiLoader('Generating summary...');
+
+            try {
+                const prompt = Summarize the following document in 2-3 concise sentences:\n\n${documentText};
+                const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+                const summary = await callGeminiAPI(payload);
+                
+                document.getElementById('summaryText').textContent = summary;
+                summaryContainer.style.display = 'block';
+
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                geminiLoader.style.display = 'none';
+            }
+        }
+
+        async function handleSuggestQueries() {
+            const documentText = document.getElementById('documentText').value.trim();
+            if (!documentText) {
+                showError('Please paste a document to get query suggestions.');
+                return;
+            }
+
+            hideAllResults();
+            showGeminiLoader('Generating suggestions...');
+
+            try {
+                const prompt = Based on the following document, generate 3 distinct, relevant questions a user might ask. Return the output as a valid JSON array of strings. Example: ["question 1", "question 2", "question 3"]\n\nDocument:\n${documentText};
+                const schema = { type: "ARRAY", items: { type: "STRING" } };
+                const payload = {
+                    contents: [{ role: "user", parts: [{ text: prompt }] }],
+                    generationConfig: { responseMimeType: "application/json", responseSchema: schema }
+                };
+
+                const suggestionsText = await callGeminiAPI(payload);
+                const suggestions = JSON.parse(suggestionsText);
+
+                const suggestionsList = document.getElementById('suggestionsList');
+                suggestionsList.innerHTML = '';
+                suggestions.forEach(q => {
+                    const button = document.createElement('button');
+                    button.textContent = q;
+                    button.className = 'suggestion-btn bg-gray-200 text-gray-800 text-sm font-medium py-2 px-3 rounded-lg hover:bg-gray-300';
+                    button.onclick = () => {
+                        document.getElementById('queryText').value = q;
+                    };
+                    suggestionsList.appendChild(button);
+                });
+                suggestionsContainer.style.display = 'block';
+
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                geminiLoader.style.display = 'none';
+            }
+        }
+
+        // --- Handler for Core Query Processing ---
+        async function handleProcessQuery() {
+            const documentText = document.getElementById('documentText').value.trim();
+            const queryText = document.getElementById('queryText').value.trim();
+
+            if (!documentText || !queryText) {
+                showError('Please provide both a document and a query.');
+                return;
+            }
+
+            hideAllResults();
+            resultsContainer.style.display = 'block';
+            loader.style.display = 'flex';
+
+            try {
+                const prompt = `
+                    You are an expert AI claims processing engine. Your task is to analyze a given document (e.g., insurance policy, contract) and a user query to make a decision. Follow these steps precisely:
+                    1.  *Parse the Query*: First, understand the user's query and extract key details.
+                    2.  *Analyze the Document*: Read the entire provided document.
+                    3.  *Identify Relevant Clauses*: Find and list all clauses from the document that are directly relevant to making a decision for the user's query.
+                    4.  *Evaluate and Decide: Based *only on the logic defined in the identified clauses, determine a final decision. The decision must be one of: "Approved", "Rejected", or "Further Information Required".
+                    5.  *Determine Amount*: If the decision is "Approved" and the clauses specify a monetary amount or limit, state that amount. Otherwise, state "N/A".
+                    6.  *Provide Justification*: Explain your reasoning step-by-step, referencing how the clauses led to your decision.
+                    7.  *Format Output*: Return the entire response as a single, valid JSON object. Do not include any text or markdown formatting outside the JSON object.
+                    *Document:*
+                    \\\`
+                    ${documentText}
+                    \\\`
+                    *User Query:*
+                    "${queryText}"
+                `;
+
+                const schema = {
+                    type: "OBJECT",
+                    properties: {
+                        "decision": { "type": "STRING", "enum": ["Approved", "Rejected", "Further Information Required"] },
+                        "amount": { "type": "STRING" },
+                        "justification": { "type": "STRING" },
+                        "relevant_clauses": { "type": "ARRAY", "items": { "type": "STRING" } }
+                    },
+                    required: ["decision", "amount", "justification", "relevant_clauses"]
+                };
+                
+                const payload = {
+                    contents: [{ role: "user", parts: [{ text: prompt }] }],
+                    generationConfig: { responseMimeType: "application/json", responseSchema: schema }
+                };
+
+                const jsonText = await callGeminiAPI(payload);
+                const parsedJson = JSON.parse(jsonText);
+                displayResults(parsedJson);
+
+            } catch (error) {
+                console.error('Error during analysis:', error);
+                showError(error.message || 'An unknown error occurred.');
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        // --- UI Display and Utility Functions ---
+        function displayResults(data) {
+            document.getElementById('jsonOutput').textContent = JSON.stringify(data, null, 2);
+            jsonOutputContainer.style.display = 'block';
+
+            const decisionText = document.getElementById('decisionText');
+            const decisionIcon = document.getElementById('decisionIcon');
+            decisionText.textContent = data.decision;
+
+            switch (data.decision.toLowerCase()) {
+                case 'approved':
+                    decisionText.className = 'text-2xl font-bold text-green-600';
+                    decisionIcon.textContent = '✅';
+                    break;
+                case 'rejected':
+                    decisionText.className = 'text-2xl font-bold text-red-600';
+                    decisionIcon.textContent = '❌';
+                    break;
+                default:
+                    decisionText.className = 'text-2xl font-bold text-yellow-600';
+                    decisionIcon.textContent = '⚠';
+                    break;
+            }
+
+            document.getElementById('justificationText').textContent = data.justification;
+
+            const amountContainer = document.getElementById('amountContainer');
+            if (data.amount && data.amount.toLowerCase() !== 'n/a') {
+                document.getElementById('amountText').textContent = data.amount;
+                amountContainer.style.display = 'block';
+            } else {
+                amountContainer.style.display = 'none';
+            }
+
+            const clausesList = document.getElementById('clausesList');
+            clausesList.innerHTML = '';
+            if (data.relevant_clauses && data.relevant_clauses.length > 0) {
+                data.relevant_clauses.forEach(clause => {
+                    const li = document.createElement('li');
+                    li.textContent = clause;
+                    clausesList.appendChild(li);
+                });
+            } else {
+                const li = document.createElement('li');
+                li.textContent = "No specific clauses were identified.";
+                clausesList.appendChild(li);
+            }
+            
+            formattedResults.style.display = 'block';
+            resultsContainer.style.display = 'block';
+        }
+
+        function showError(message) {
+            hideAllResults();
+            errorText.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+
+        function showGeminiLoader(text) {
+            geminiLoaderText.textContent = text;
+            geminiLoader.style.display = 'flex';
+        }
+
+        function hideAllResults() {
+            errorMessage.style.display = 'none';
+            resultsContainer.style.display = 'none';
+            formattedResults.style.display = 'none';
+            jsonOutputContainer.style.display = 'none';
+            summaryContainer.style.display = 'none';
+            suggestionsContainer.style.display = 'none';
+            geminiLoader.style.display = 'none';
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="submit.html">
+    <h1>Registration Form</h1>
+    <hr>
+    <input type="text" placeholder="First Name" required name="fname" id="fname">
+    <input type="text" placeholder="Last Name" name="lname" id="lname">
+    <br><br>
+
+    <label for="age">Age:</label>
+    <input type="number" placeholder="Enter your age" min="0" name="age" id="age">
+    <br><br>
+
+    <label for="phone">Phone:</label>
+    <input type="tel" placeholder="+910000000000" name="phone" id="phone">
+    <br><br>
+        <label for="email">Email:</label>
+        <input type="email" placeholder="Enter your email address" id="email" name="email" required><br><br>
+        <label for="password">Password:</label>
+        <input type="password" placeholder="Enter password" id="password" name="password" minlength="8" required><br><br>
+    
+    Gender:
+    <input type="radio" name="gender" id="male" value="male">
+    <label for="male">Male</label>
+    <input type="radio" name="gender" id="female" value="female">
+    <label for="female">Female</label>
+    <br><br>
+        <label for="dob">DOB:</label>
+        <input type="date" placeholder="Enter your date of birth" id="dob" name="dob">
+    <br><br>
+        <label for="address">Address:</label>
+        <textarea id="address" placeholder="Enter address" name="address"></textarea>
+    <br><br>
+    Photo:<input type="file" accept=".jpg,.png">
+    <br><br>
+    Qualification:
+    <select>
+        <option disabled selected>Choose Your Qualification</option>
+        <option>10th passed</option>
+        <option>12th passed</option>
+        <option>Under Graduate</option>
+        <option>Graduate</option>
+        <option>Post Graduate</option>
+        <option>PhD</option>
+        </select>
+    <br><br>
+    Hobbies:
+    <input type="checkbox" name="h" value="Singing">Singing
+    <input type="checkbox" name="h" value="Dancing">Dancing
+    <input type="checkbox" name="h" value="Travelling">Travelling
+    <input type="checkbox" name="h" value="Others">Others
+    <br><br>
+    <input type="submit" value="Register">
+    <input type="reset" value="Reset">
+</form>
+</body>
+</html>
