@@ -4,3 +4,37 @@ div{
     background-color: rgba(255,0,0,0.6);
     color: #ffffffa1;
 }
+
+#opacity{
+    background-color: #ffa511;
+    opacity: 0.5 ;
+    margin:0 0 1cm 0; 
+    /* whole div including content disappear if 0 opacity */
+}
+
+#a{
+    height: 200px;
+    width: 200px;
+    background-color: darkcyan;
+    transition-duration: 1s;
+    transition-delay: 1s;
+}
+
+#a:hover{
+    background-color: black;
+    border-radius: 50%;
+}
+
+#b{
+    height: 100px;
+    width: 100px;
+    background-color: red;
+    margin: 0 auto;
+    margin-top: 10px;
+    transition: margin-top 2s ease-in-out 0.2s;
+}
+
+#b:hover{
+    margin-top: 400px;
+    background-color: pink;
+}
