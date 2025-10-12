@@ -23,7 +23,7 @@ div:nth-of-type(3n){
 /* transform */
 
 #one{
-    transform: rotate(0deg);
+    /* transform: rotate(0deg); */
     transition: transform 1s ease 0.1s;
 
 }

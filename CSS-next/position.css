@@ -18,8 +18,8 @@ div{
 #relative{
     background-color: yellow;
     position: relative;
-    top: 100px;
-    left: 100px;
+    top: 10px;
+    left: 10px;
 }
 
 #absolute{
