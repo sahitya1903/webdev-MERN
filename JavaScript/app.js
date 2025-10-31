@@ -22,7 +22,7 @@ if(age>=21){
     console.log(`Welcome, ${name}.`);
     console.log("You can marry and vote")
 }
-else if(age>=18){
+else if(age>=18 && age<21){
     console.log(`Welcome, ${name}.`);
     console.log("You can vote, but can't marry.")
 }
@@ -30,3 +30,66 @@ else{
     console.log(`Welcome, ${name}.`);
     console.log("You can't vote or marry")
 }
+
+
+let str="apple";
+if(str.length>3 && str[0]==="a"){
+    console.log("Good String")
+}else{
+    console.log("Bad String")
+}
+
+
+let color="red";
+switch (color) {
+    case "red":
+        console.log("Stop");
+        break;
+    case "yellow":
+        console.log("Wait");
+        break;
+    case "green":
+        console.log("Go");
+        break;
+    default:
+        break;
+}
+
+
+let day=2;
+switch (day) {
+    case 1:
+        console.log("Monday");
+        break;
+    case 2:
+        console.log("Tuesday");
+        break;    
+    case 3:
+        console.log("Wednesday");
+        break;
+    case 4:
+        console.log("Thursday");
+        break;
+    case 5:
+        console.log("Friday");
+        break;
+    case 6:
+        console.log("Saturday");
+        break;
+    case 7:
+        console.log("Sunday");
+        break;
+    default:
+        console.log("Invalid choice");
+}
+
+
+console.log("Normal Message");
+console.error("Error Message");
+console.warn("Warning Message");
+
+// alert("Danger");
+
+let fname= prompt("Enter your Name:");
+console.log(fname);
+alert(`Welcome, ${fname}!`);
