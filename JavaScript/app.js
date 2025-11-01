@@ -1,46 +1,46 @@
 console.log("Hello World!");
 console.log("Apna College");
 
-let a=5;
-let b=10;
-console.log("Sum is:",(a+b));
+let a = 5;
+let b = 10;
+console.log("Sum is:", (a + b));
 
 
-let pencilPrice=10;
-let eraserPrice=6;
+let pencilPrice = 10;
+let eraserPrice = 6;
 // let output="Total Price:"+(pencilPrice+eraserPrice)+ " Rupees."
-let output=`Total Price: ${pencilPrice+eraserPrice} rupees.` //Template literal : $
+let output = `Total Price: ${pencilPrice + eraserPrice} rupees.` //Template literal : $
 console.log(output);
 
-let c=10;
+let c = 10;
 console.log(c++); //10
 console.log(++c); //12
 
-let name="Sahitya";
-let age=21;
-if(age>=21){
+let name = "Sahitya";
+let age = 21;
+if (age >= 21) {
     console.log(`Welcome, ${name}.`);
     console.log("You can marry and vote")
 }
-else if(age>=18 && age<21){
+else if (age >= 18 && age < 21) {
     console.log(`Welcome, ${name}.`);
     console.log("You can vote, but can't marry.")
 }
-else{
+else {
     console.log(`Welcome, ${name}.`);
     console.log("You can't vote or marry")
 }
 
 
-let str="apple";
-if(str.length>3 && str[0]==="a"){
+let str = "apple";
+if (str.length > 3 && str[0] === "a") {
     console.log("Good String")
-}else{
+} else {
     console.log("Bad String")
 }
 
 
-let color="red";
+let color = "red";
 switch (color) {
     case "red":
         console.log("Stop");
@@ -56,14 +56,14 @@ switch (color) {
 }
 
 
-let day=2;
+let day = 2;
 switch (day) {
     case 1:
         console.log("Monday");
         break;
     case 2:
         console.log("Tuesday");
-        break;    
+        break;
     case 3:
         console.log("Wednesday");
         break;
