@@ -71,3 +71,5 @@ for(list of student){
         console.log(item);
     }
 }
+
+console.log(typeof fruits);
