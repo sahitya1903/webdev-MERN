@@ -86,21 +86,3 @@ function concatstr(arr){
 }
 
 console.log(concatstr(["i","am","sahitya"]));
-
-// //Leetcode Javascript Q1
-// /**
-//  * @return {Function}
-//  */
-// var createHelloWorld = function() {
-    
-//     return function(...args) {
-//         return "Hello World";
-//     }
-// };
-
-// /**
-//  * const f = createHelloWorld();
-//  * f(); // "Hello World"
-//  */
-
-// console.log(createHelloWorld()());
