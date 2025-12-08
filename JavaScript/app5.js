@@ -44,6 +44,8 @@ function sum(a,b){
 
 let a=sum(2,3);
 console.log(a);
+console.log(sum(3,4));
+console.log(sum(1,sum(2,3)));
 
 function avg(a,b,c){
     average=(a+b+c)/3;
@@ -62,6 +64,28 @@ function table(n){
 }
 
 table(6);
+
+
+function nsum(n){
+    // ans=n*(n+1)/2;
+    let ans=0;
+    for(let i=0;i<=n;i++){
+        ans+=i;
+    }
+    return ans;
+}
+
+console.log(nsum(5));
+
+function concatstr(arr){
+    let ans="";
+    for(let i=0;i<arr.length;i++){
+        ans+=arr[i];
+    }
+    return ans;
+}
+
+console.log(concatstr(["i","am","sahitya"]));
 
 // //Leetcode Javascript Q1
 // /**
