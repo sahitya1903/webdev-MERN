@@ -63,7 +63,7 @@ const infoobj= {
         grade: "A",
         city: "Pune"
     }
-}
+};
 
 console.log(infoobj);
 console.log(infoobj.aman);
@@ -82,7 +82,7 @@ const infoarr= [
         grade: "A",
         city: "Pune"
     }
-]
+];
 
 console.log(infoarr);
 console.log(infoarr[0]);
