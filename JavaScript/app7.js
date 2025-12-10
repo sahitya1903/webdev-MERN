@@ -51,3 +51,23 @@ const square=n=>n*n;
 console.log(square(5));
 
 
+console.log("Hi, there!");
+
+setTimeout( ()=>{
+    console.log("Apna College");
+},4000);
+
+console.log("Welcome to ");
+
+
+console.log("Hello!");
+
+let id=setInterval( ()=>{
+    console.log("Agra");
+},2000);
+
+console.log(id);
+
+clearInterval(id);
+
+
