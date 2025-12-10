@@ -59,15 +59,45 @@ setTimeout( ()=>{
 
 console.log("Welcome to ");
 
-
-console.log("Hello!");
-
 let id=setInterval( ()=>{
     console.log("Agra");
 },2000);
 
-console.log(id);
+setTimeout(()=>clearInterval(id),4000);
 
-clearInterval(id);
+const student2={
+    name: 'sahitya',
+    marks: 95,
+    prop: this, //global scope = window object
+    getName: function(){
+        console.log(this);  //this= student object
+        return this.name;
+    },
+    getMarks: ()=>{
+        console.log(this);    //this = parent's scope = window object(lexical scope)
+        return this.marks;  // undefined for window object
+    },
+    getInfo1: function(){
+        setTimeout(()=>{
+            console.log(this);      //student 
+        },2000);
+    },
+    getInfo2: function(){
+        setTimeout(function(){
+            console.log(this);      //window
+        },2000);
+    }
+}
+
+console.log(student2.getName());
+console.log(student2.getMarks());
+student2.getInfo1();
+student2.getInfo2();
 
 
+
+let id2= setInterval(()=>console.log("Hello World"),2000);
+setTimeout(()=>{
+    clearInterval(id2),
+    console.log("Cleared Interval");
+},10000);
