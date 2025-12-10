@@ -82,7 +82,7 @@ console.log(func);
 func(6);
 
 
-const calculator={          //Methos
+const calculator={          //Methods
     add: function(a,b){
         return a+b;
     },
