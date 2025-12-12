@@ -1,3 +1,5 @@
+//Objects
+
 let delhi={
     latitude: "28.7041 N",
     longitude: "23.4555 E"

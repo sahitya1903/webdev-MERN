@@ -1,3 +1,5 @@
+//Array Basics
+
 let nums=[2,4,6,8];
 console.log(nums);
 console.log(nums[2]);
