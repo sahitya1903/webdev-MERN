@@ -77,5 +77,10 @@ for(let i=0;i<obj2.length;i++){
 
 heading.innerHTML="<u>Spider Man</u>"
 console.dir(heading);
-console.dir(heading.style);
+console.dir(heading.style); //Shows only inline style declared
 heading.style.color='green';
+
+let links=document.querySelectorAll(".box a");
+for(link of links){
+    link.style.color='yellow';
+}
