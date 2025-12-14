@@ -31,6 +31,8 @@ box.classList.add('yellowBg');
 console.log(box.classList);
 
 
+//Navigation on page
+
 let h4=document.querySelector('h4');
 console.dir(h4.parentElement);
 console.dir(h4.children);
@@ -43,3 +45,34 @@ console.dir(ul.parentElement);
 console.dir(ul.children);
 console.dir(ul.previousElementSibling);
 console.dir(ul.nextElementSibling);
+
+img.previousElementSibling.style.color='red'; 
+
+//Adding element on page
+let btn=document.createElement('button');
+let btn2=document.createElement('button');
+
+console.dir(btn);
+btn.innerText="Click Me";
+btn2.innerText="Do not Click Me";
+
+
+box.appendChild(btn);
+box.append("Hello, modified paragraph 1 here");
+box.append(btn);
+
+box.prepend("Hello, modified paragraph 2 here");
+box.prepend(btn2);
+
+let btn3=document.createElement('button');
+btn3.innerText="Button 3";
+box.insertAdjacentElement('beforebegin',btn3);
+box.insertAdjacentElement('afterbegin',btn3);
+box.insertAdjacentElement('beforeend',btn3);
+box.insertAdjacentElement('afterend',btn3);
+
+//Removing element on Page
+let body=document.querySelector('body');
+body.removeChild(btn3);     //btn3 is child of body
+
+btn.remove();   //direct removal
