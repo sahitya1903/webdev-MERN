@@ -64,7 +64,7 @@ console.log(img.getAttribute('id'));
 img.setAttribute('id','spidermanImg');
 img.setAttribute('src','assets/spiderman_img.png');
 console.log(img.getAttribute('class'));
-img.setAttribute('class','main');
+img.setAttribute('class','main');   //not used, as sets only one class name; use classList
 
 console.dir(obj2);
 for(let i=0;i<obj2.length;i++){
@@ -84,3 +84,4 @@ let links=document.querySelectorAll(".box a");
 for(link of links){
     link.style.color='yellow';
 }
+
