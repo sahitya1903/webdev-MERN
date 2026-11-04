@@ -1,0 +1,13 @@
+{
+  "name": "murmur-chat",
+  "version": "1.0.0",
+  "description": "Murmur: a WhatsApp-style real-time chat (Express + Socket.IO)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  }
+}
