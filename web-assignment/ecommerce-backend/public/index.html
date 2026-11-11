@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bazaar</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231f4d3a'/%3E%3Ctext x='16' y='23' font-family='Georgia' font-weight='700' font-size='20' fill='%23f6efe3' text-anchor='middle'%3EB%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=DM+Sans:wght@400;500;600;700&display=swap">
+  <style>
+    :root {
+      --cream: #f6efe3;
+      --paper: #fffaf2;
+      --ink: #1d2a24;
+      --muted: #6d7a72;
+      --line: #e7dccb;
+      --forest: #1f4d3a;
+      --forest-soft: #e3eee7;
+      --clay: #c8643b;
+      --clay-soft: #f8e4d8;
+      --danger: #b42318;
+      --shadow: 0 1px 2px rgba(29, 42, 36, .06), 0 8px 24px -12px rgba(29, 42, 36, .18);
+      color-scheme: light;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --cream: #141a17; --paper: #1c2420; --ink: #eef1ec; --muted: #9aa69f; --line: #2c3731;
+        --forest: #7cc4a0; --forest-soft: #213229; --clay: #e98a62; --clay-soft: #3a2a22; --danger: #f97066;
+        --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px -12px rgba(0, 0, 0, .6);
+        color-scheme: dark;
+      }
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body { margin: 0; background: var(--cream); color: var(--ink); font-family: "DM Sans", system-ui, sans-serif; }
+    button, input { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    h1, h2, h3 { font-family: Fraunces, Georgia, serif; letter-spacing: -.01em; }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 5;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 14px clamp(16px, 4vw, 40px);
+      background: color-mix(in srgb, var(--cream) 88%, transparent); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+    .brand { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 24px; }
+    .brand span { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; background: var(--forest); color: var(--cream); font-size: 19px; }
+    .shopper { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+    .shopper input { width: 120px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); }
+
+    .layout {
+      display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 28px; align-items: start;
+      grid-template-areas: "shop cart" "orders cart";
+      max-width: 1240px; margin: 0 auto; padding: 28px clamp(16px, 4vw, 40px) 60px;
+    }
+    .hero h2 { margin: 0 0 4px; font-size: clamp(28px, 4vw, 40px); }
+    .hero p { margin: 0 0 18px; color: var(--muted); }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    .chip { padding: 7px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); font-size: 14px; font-weight: 500; }
+    .chip.on { background: var(--forest); border-color: var(--forest); color: var(--cream); }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; }
+    .card { display: flex; flex-direction: column; background: var(--paper); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow); }
+    .swatch {
+      --h: 200;
+      height: 120px; display: grid; place-items: center;
+      font-family: Fraunces, Georgia, serif; font-size: 44px; font-weight: 700;
+      background: hsl(var(--h) 55% 88%); color: hsl(var(--h) 45% 32%);
+    }
+    @media (prefers-color-scheme: dark) {
+      .swatch { background: hsl(var(--h) 25% 22%); color: hsl(var(--h) 60% 78%); }
+    }
+    .card-body { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px 16px; flex: 1; }
+    .card-cat { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+    .card h3 { margin: 0; font-size: 17px; }
+    .card-foot { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 8px; }
+    .price { font-weight: 700; font-size: 17px; }
+    .stock { font-size: 12px; color: var(--muted); }
+    .stock.low { color: var(--clay); font-weight: 600; }
+    .add { padding: 8px 14px; border: 0; border-radius: 10px; background: var(--forest); color: var(--cream); font-weight: 600; }
+    .add:disabled { opacity: .4; cursor: default; }
+
+    .panel { position: sticky; top: 84px; background: var(--paper); border: 1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow); padding: 20px; }
+    .panel h2 { margin: 0 0 14px; font-size: 22px; display: flex; justify-content: space-between; align-items: baseline; }
+    .panel h2 small { font-family: "DM Sans", sans-serif; font-size: 13px; color: var(--muted); font-weight: 500; }
+    .lines { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+    .line { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; padding-bottom: 12px; border-bottom: 1px dashed var(--line); }
+    .line-title { font-weight: 600; font-size: 14px; }
+    .line-amt { font-weight: 700; font-size: 14px; text-align: right; }
+    .stepper { justify-self: start; display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; }
+    .stepper button { width: 28px; height: 28px; border: 0; background: transparent; font-weight: 700; }
+    .stepper button:hover { background: var(--forest-soft); }
+    .stepper span { min-width: 26px; text-align: center; font-size: 14px; font-weight: 600; }
+    .remove { border: 0; background: none; color: var(--muted); font-size: 13px; text-decoration: underline; justify-self: end; }
+    .empty { color: var(--muted); font-size: 14px; margin: 6px 0 4px; }
+
+    .coupon { display: flex; gap: 8px; margin: 16px 0 6px; }
+    .coupon input { flex: 1; min-width: 0; padding: 10px 12px; border: 1px dashed var(--clay); border-radius: 10px; background: var(--clay-soft); text-transform: uppercase; }
+    .coupon button, .ghost { padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: transparent; font-weight: 600; }
+    .applied { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding: 10px 12px; border-radius: 10px; background: var(--clay-soft); color: var(--clay); font-size: 13px; font-weight: 600; }
+    .applied button { border: 0; background: none; color: inherit; text-decoration: underline; }
+    .hint { margin: 0; font-size: 12px; color: var(--muted); }
+
+    .totals { display: grid; gap: 6px; margin: 16px 0; font-size: 14px; }
+    .totals div { display: flex; justify-content: space-between; }
+    .totals .save { color: var(--clay); }
+    .totals .grand { margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--line); font-size: 18px; font-weight: 700; }
+    .checkout { width: 100%; padding: 14px; border: 0; border-radius: 12px; background: var(--clay); color: #fff; font-weight: 700; font-size: 16px; }
+    .checkout:disabled { opacity: .45; cursor: default; }
+
+    .orders { margin-top: 36px; }
+    .orders h2 { font-size: 24px; margin: 0 0 12px; }
+    .order { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; padding: 14px 16px; margin-bottom: 10px; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; font-size: 14px; }
+    .order strong { font-family: Fraunces, Georgia, serif; font-size: 16px; }
+    .badge { padding: 3px 9px; border-radius: 999px; background: var(--forest-soft); color: var(--forest); font-size: 12px; font-weight: 700; }
+
+    .toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); max-width: calc(100% - 32px); padding: 12px 18px; border-radius: 12px; background: var(--ink); color: var(--cream); font-size: 14px; box-shadow: var(--shadow); }
+    .toast.bad { background: var(--danger); color: #fff; }
+
+    .layout > main { grid-area: shop; }
+    .layout > .panel { grid-area: cart; }
+    .layout > .orders { grid-area: orders; }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: "shop" "cart" "orders"; }
+      .panel { position: static; }
+    }
+    @media (max-width: 480px) {
+      .shopper label { display: none; }
+      .grid { grid-template-columns: minmax(0, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <h1 class="brand"><span>B</span>Bazaar</h1>
+    <div class="shopper">
+      <label for="user">Shopping as</label>
+      <input id="user" value="asha" maxlength="40" autocomplete="off" aria-label="Shopper id">
+    </div>
+  </header>
+
+  <div class="layout">
+    <main>
+      <section class="hero">
+        <h2>Little things for your desk &amp; home</h2>
+        <p>Free delivery on orders of ₹999 or more. Try coupon <b>WELCOME10</b> or <b>FLAT100</b>.</p>
+      </section>
+      <div id="chips" class="chips"></div>
+      <div id="grid" class="grid"></div>
+    </main>
+
+    <section class="orders">
+      <h2>Your orders</h2>
+      <div id="orders"></div>
+    </section>
+
+    <aside class="panel" aria-label="Cart">
+      <h2>Cart <small id="units"></small></h2>
+      <ul id="lines" class="lines"></ul>
+      <p id="cart-empty" class="empty">Your cart is empty.</p>
+
+      <form id="coupon-form" class="coupon">
+        <input id="coupon" placeholder="Coupon code" autocomplete="off" aria-label="Coupon code">
+        <button type="submit">Apply</button>
+      </form>
+      <div id="applied" class="applied" hidden></div>
+
+      <div id="totals" class="totals"></div>
+      <button id="checkout" class="checkout" type="button" disabled>Place order</button>
+    </aside>
+  </div>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const rupees = (n) => '₹' + n.toLocaleString('en-IN', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
+    const HUES = { Kitchen: 22, Workspace: 150, Audio: 260, Stationery: 45, Decor: 110 };
+
+    let products = [];
+    let category = '';
+    const user = () => encodeURIComponent($('user').value.trim() || 'guest');
+
+    function make(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    }
+
+    // Small fetch wrapper: throws the API's error message so we can show it.
+    async function api(method, path, body) {
+      const res = await fetch(path, {
+        method,
+        headers: body ? { 'Content-Type': 'application/json' } : {},
+        body: body ? JSON.stringify(body) : undefined,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error?.message || 'Request failed');
+      return data;
+    }
+
+    let toastTimer;
+    function toast(text, bad = false) {
+      const node = $('toast');
+      node.textContent = text;
+      node.className = 'toast' + (bad ? ' bad' : '');
+      node.hidden = false;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => (node.hidden = true), 2800);
+    }
+
+    // Run an API call, redraw the cart with its result, report errors.
+    async function act(promise, okText) {
+      try {
+        renderCart(await promise);
+        if (okText) toast(okText);
+      } catch (err) {
+        toast(err.message, true);
+      }
+    }
+
+    // ---------- catalog ----------
+    async function loadProducts() {
+      products = await api('GET', '/api/products');
+      const cats = ['', ...new Set(products.map((p) => p.category))];
+      $('chips').replaceChildren(...cats.map((c) => {
+        const chip = make('button', 'chip' + (c === category ? ' on' : ''), c || 'All');
+        chip.type = 'button';
+        chip.onclick = () => { category = c; loadProducts(); };
+        return chip;
+      }));
+      renderGrid();
+    }
+
+    function renderGrid() {
+      const shown = products.filter((p) => !category || p.category === category);
+      $('grid').replaceChildren(...shown.map((p) => {
+        const card = make('article', 'card');
+        const hue = HUES[p.category] ?? 200;
+        const swatch = make('div', 'swatch', p.title[0]);
+        swatch.style.setProperty('--h', hue);
+
+        const body = make('div', 'card-body');
+        const foot = make('div', 'card-foot');
+        const add = make('button', 'add', p.inStock ? 'Add' : 'Sold out');
+        add.type = 'button';
+        add.disabled = !p.inStock;
+        add.onclick = () => act(api('POST', `/api/users/${user()}/cart/items`, { sku: p.sku, qty: 1 }), `Added ${p.title}`);
+        const priceBox = make('div');
+        priceBox.append(make('div', 'price', rupees(p.price)),
+          make('div', 'stock' + (p.stock <= 5 ? ' low' : ''), p.stock ? `${p.stock} in stock` : 'Out of stock'));
+        foot.append(priceBox, add);
+        body.append(make('span', 'card-cat', p.category), make('h3', '', p.title), foot);
+        card.append(swatch, body);
+        return card;
+      }));
+    }
+
+    // ---------- cart ----------
+    function renderCart(cart) {
+      const base = `/api/users/${user()}/cart`;
+      $('units').textContent = cart.summary.units ? `${cart.summary.units} item${cart.summary.units > 1 ? 's' : ''}` : '';
+      $('cart-empty').hidden = cart.lines.length > 0;
+      $('checkout').disabled = cart.lines.length === 0;
+
+      $('lines').replaceChildren(...cart.lines.map((l) => {
+        const li = make('li', 'line');
+        const stepper = make('div', 'stepper');
+        const minus = make('button', '', '−');
+        const plus = make('button', '', '+');
+        minus.type = plus.type = 'button';
+        minus.setAttribute('aria-label', `One less ${l.title}`);
+        plus.setAttribute('aria-label', `One more ${l.title}`);
+        minus.onclick = () => act(api('PUT', `${base}/items/${l.sku}`, { qty: l.qty - 1 }));
+        plus.onclick = () => act(api('PUT', `${base}/items/${l.sku}`, { qty: l.qty + 1 }));
+        stepper.append(minus, make('span', '', l.qty), plus);
+
+        const remove = make('button', 'remove', 'Remove');
+        remove.type = 'button';
+        remove.onclick = () => act(api('DELETE', `${base}/items/${l.sku}`));
+
+        li.append(make('span', 'line-title', l.title), make('span', 'line-amt', rupees(l.amount)), stepper, remove);
+        return li;
+      }));
+
+      const applied = $('applied');
+      applied.hidden = !cart.coupon;
+      $('coupon-form').hidden = Boolean(cart.coupon);
+      if (cart.coupon) {
+        const drop = make('button', '', 'Remove');
+        drop.type = 'button';
+        drop.onclick = () => act(api('DELETE', `${base}/coupon`));
+        const text = cart.coupon.active
+          ? `${cart.coupon.code} · ${cart.coupon.description}`
+          : `${cart.coupon.code} needs a bigger cart`;
+        applied.replaceChildren(make('span', '', text), drop);
+      }
+
+      const s = cart.summary;
+      const row = (label, value, cls = '') => {
+        const div = make('div', cls);
+        div.append(make('span', '', label), make('span', '', value));
+        return div;
+      };
+      const rows = [row('Subtotal', rupees(s.subtotal))];
+      if (s.discount) rows.push(row('Coupon savings', '−' + rupees(s.discount), 'save'));
+      rows.push(row('GST (18%)', rupees(s.gst)));
+      rows.push(row('Delivery', s.delivery ? rupees(s.delivery) : (s.subtotal ? 'Free' : '—')));
+      rows.push(row('Total', rupees(s.grandTotal), 'grand'));
+      $('totals').replaceChildren(...rows);
+    }
+
+    $('coupon-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const code = $('coupon').value.trim();
+      if (!code) return;
+      act(api('PUT', `/api/users/${user()}/cart/coupon`, { code }), 'Coupon applied');
+      $('coupon').value = '';
+    });
+
+    // ---------- orders ----------
+    $('checkout').addEventListener('click', async () => {
+      try {
+        const order = await api('POST', `/api/users/${user()}/orders`);
+        toast(`Order ${order.orderNo} confirmed · ${rupees(order.summary.grandTotal)}`);
+        await Promise.all([refreshCart(), loadProducts(), loadOrders()]);
+      } catch (err) {
+        toast(err.message, true);
+      }
+    });
+
+    async function loadOrders() {
+      const list = await api('GET', `/api/users/${user()}/orders`);
+      if (!list.length) {
+        $('orders').replaceChildren(make('p', 'empty', 'No orders yet.'));
+        return;
+      }
+      $('orders').replaceChildren(...list.map((o) => {
+        const row = make('div', 'order');
+        const left = make('div');
+        left.append(make('strong', '', o.orderNo), make('div', 'hint',
+          `${new Date(o.placedAt).toLocaleString()} · ${o.lines.map((l) => `${l.qty}× ${l.title}`).join(', ')}`));
+        const right = make('div');
+        right.append(make('span', 'badge', o.status), make('div', 'price', rupees(o.summary.grandTotal)));
+        row.append(left, right);
+        return row;
+      }));
+    }
+
+    const refreshCart = () => act(api('GET', `/api/users/${user()}/cart`));
+
+    $('user').addEventListener('change', () => { refreshCart(); loadOrders(); });
+
+    loadProducts().catch(() => toast('Could not reach the API', true));
+    refreshCart();
+    loadOrders().catch(() => {});
+  </script>
+</body>
+</html>
